@@ -23,6 +23,8 @@ class UserModel extends Model
         'last_login_at',
         'has_done_first_tx',
         'is_premium',
+        'is_admin',
+        'profile_image',
     ];
 
     // Dates

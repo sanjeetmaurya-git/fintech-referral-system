@@ -17,6 +17,10 @@ use App\Models\TransactionRewardTierModel;
 use App\Models\ServiceRechargeOperatorModel;
 use App\Models\ServiceEcommercePlatformModel;
 use App\Models\ServiceTransactionModel;
+use App\Models\WorkerModel;
+use App\Models\WorkerDocumentModel;
+use App\Models\WorkCategoryModel;
+use App\Models\WorkSubcategoryModel;
 
 class AdminController extends BaseController
 {
@@ -43,6 +47,9 @@ class AdminController extends BaseController
         $this->rechargeOperatorModel   = new ServiceRechargeOperatorModel();
         $this->ecommercePlatformModel  = new ServiceEcommercePlatformModel();
         $this->serviceTransactionModel = new ServiceTransactionModel();
+        $this->workerModel            = new WorkerModel();
+        $this->workerDocModel        = new WorkerDocumentModel();
+        $this->workCategoryModel     = new WorkCategoryModel();
     }
 
     public function index()
@@ -775,4 +782,100 @@ class AdminController extends BaseController
 
         return redirect()->back()->with('success', 'Service transaction approved and rewards distributed.');
     }
+
+    // ==================================
+    // Phase 10: Worker Management
+    // ==================================
+
+    public function workers()
+    {
+        $status = $this->request->getGet('status') ?? 'all';
+        $query = $this->workerModel->select('workers.*, users.phone, work_categories.name as category_name')
+                                   ->join('users', 'users.id = workers.user_id')
+                                   ->join('work_categories', 'work_categories.id = workers.category_id', 'left');
+        
+        if ($status !== 'all') {
+            $query = $query->where('workers.status', $status);
+        }
+
+        $data = [
+            'title'          => 'Worker Management',
+            'active'         => 'workers',
+            'workers'        => $query->orderBy('workers.id', 'DESC')->findAll(),
+            'current_status' => $status
+        ];
+        return view('admin/workers/index', $data);
+    }
+
+    public function viewWorker($id)
+    {
+        $worker = $this->workerModel->select('workers.*, users.phone, up.full_name, up.email, work_categories.name as category_name, work_subcategories.name as subcategory_name')
+                                    ->join('users', 'users.id = workers.user_id')
+                                    ->join('user_profiles up', 'up.user_id = users.id', 'left')
+                                    ->join('work_categories', 'work_categories.id = workers.category_id', 'left')
+                                    ->join('work_subcategories', 'work_subcategories.id = workers.subcategory_id', 'left')
+                                    ->where('workers.id', $id)
+                                    ->first();
+
+        if (!$worker) {
+            return redirect()->to(base_url('admin/workers'))->with('error', 'Worker not found.');
+        }
+
+        $data = [
+            'title'     => 'Verify Worker: ' . ($worker['full_name'] ?? 'User'),
+            'active'    => 'workers',
+            'worker'    => $worker,
+            'documents' => $this->workerDocModel->where('worker_id', $id)->findAll()
+        ];
+        return view('admin/workers/view', $data);
+    }
+
+    public function approveWorker($id)
+    {
+        if ($this->workerModel->update($id, ['status' => 'approved'])) {
+            $this->auditLogModel->log(session()->get('user_id'), 'APPROVE_WORKER', "Approved worker application ID: {$id}");
+            return redirect()->to(base_url('admin/workers'))->with('success', 'Worker application approved.');
+        }
+        return redirect()->back()->with('error', 'Failed to approve worker.');
+    }
+
+    public function rejectWorker($id)
+    {
+        if ($this->workerModel->update($id, ['status' => 'rejected'])) {
+            $this->auditLogModel->log(session()->get('user_id'), 'REJECT_WORKER', "Rejected worker application ID: {$id}");
+            return redirect()->to(base_url('admin/workers'))->with('success', 'Worker application rejected.');
+        }
+        return redirect()->back()->with('error', 'Failed to reject worker.');
+    }
+
+    public function verifyDocument($docId)
+    {
+        $docModel = new WorkerDocumentModel();
+        $doc = $docModel->find($docId);
+
+        if (!$doc) {
+            return $this->response->setJSON(['success' => false, 'message' => 'Document not found.']);
+        }
+
+        $newStatus  = $doc['is_verified'] ? 0 : 1;
+        $verifiedAt = $newStatus ? date('Y-m-d H:i:s') : null;
+
+        $docModel->skipValidation(true)->update($docId, [
+            'is_verified' => $newStatus,
+            'verified_at' => $verifiedAt,
+        ]);
+
+        $this->auditLogModel->log(
+            session()->get('user_id'),
+            'VERIFY_DOCUMENT',
+            "Document #{$docId} marked as " . ($newStatus ? 'verified' : 'unverified')
+        );
+
+        return $this->response->setJSON([
+            'success'     => true,
+            'is_verified' => (bool)$newStatus,
+            'verified_at' => $verifiedAt,
+        ]);
+    }
 }
+

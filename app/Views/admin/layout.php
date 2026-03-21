@@ -134,6 +134,10 @@ $active = $active ?? '';
            class="<?= $active === 'user-settings' ? 'active' : '' ?>">
             <i class="bi bi-person-gear"></i> User Settings
         </a>
+        <a href="<?= base_url('admin/workers') ?>"
+           class="<?= $active === 'workers'     ? 'active' : '' ?>">
+            <i class="bi bi-briefcase-fill"></i> Worker Management
+        </a>
         <a href="<?= base_url('admin/settings') ?>"
            class="<?= $active === 'settings'     ? 'active' : '' ?>">
             <i class="bi bi-gear-fill"></i> System Settings

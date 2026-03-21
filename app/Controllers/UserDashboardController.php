@@ -207,12 +207,16 @@ class UserDashboardController extends BaseController
         $userId = $this->session->get('user_id');
         $user   = $this->userModel->find($userId);
         $wallet = $this->walletModel->where('user_id', $userId)->first();
+        
+        $profileModel = new UserProfileModel();
+        $profile = $profileModel->where('user_id', $userId)->first();
 
         // One-time auto-approval check on dashboard visit too
         $this->autoApproveRewards($userId);
 
         $data = [
             'user'         => $user,
+            'profile'      => $profile,
             'wallet'       => $wallet,
             'referrals'    => $this->userModel->where('referred_by', $userId)->findAll(),
             'transactions' => $this->transactionModel->where('user_id', $userId)->orderBy('id', 'DESC')->findAll(10),
@@ -285,8 +289,14 @@ class UserDashboardController extends BaseController
 
         $userId = $this->session->get('user_id');
         $wallet = $this->walletModel->where('user_id', $userId)->first();
+        
+        $profileModel = new UserProfileModel();
+        $profile = $profileModel->where('user_id', $userId)->first();
 
-        return view('user/withdraw', ['wallet' => $wallet]);
+        return view('user/withdraw', [
+            'wallet'  => $wallet,
+            'profile' => $profile
+        ]);
     }
 
     // ==========================
@@ -658,10 +668,14 @@ class UserDashboardController extends BaseController
         $userId = $this->session->get('user_id');
         $ledgerModel = new \App\Models\WalletTransactionModel(); // Actually WalletTransactionModel or the ledger tables?
 
+        $profileModel = new UserProfileModel();
+        $profile = $profileModel->where('user_id', $userId)->first();
+
         $data = [
             'title'        => 'My Coin Journey',
             'active'       => 'dashboard',
             'wallet'       => $this->walletModel->where('user_id', $userId)->first(),
+            'profile'      => $profile,
             'transactions' => $ledgerModel->where('user_id', $userId)->orderBy('id', 'DESC')->findAll(100),
         ];
 

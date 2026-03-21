@@ -102,6 +102,16 @@
             color: #1e293b;
         }
 
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.2);
+            color: white !important;
+        }
+
+        .main-nav.scrolled .nav-link:hover {
+            background-color: var(--primary-500);
+            color: white !important;
+        }
+
         .nav-link.active {
             background: rgba(255,255,255,0.2);
             color: white !important;
@@ -424,10 +434,25 @@
         }
 
         /* Responsive fine-tuning */
+        @media (max-width: 991px) {
+            .main-nav { padding: 12px 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+            .main-nav .navbar-brand, .main-nav.scrolled .navbar-brand { color: var(--primary-600); }
+            .nav-link, .main-nav.scrolled .nav-link { color: #1e293b; padding: 10px 20px !important; width: 100%; text-align: center; }
+            .navbar-toggler { border: none; padding: 0; color: var(--primary-600); font-size: 1.5rem; }
+            .navbar-toggler:focus { box-shadow: none; }
+            .navbar-collapse { background: white; border-radius: 20px; margin-top: 15px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        }
+
         @media (max-width: 768px) {
-            .hero-section { padding: 60px 0 120px; }
-            .user-card { padding: 20px; }
-            .premium-banner { padding: 40px 24px; }
+            .hero-section { padding: 100px 0 80px; border-radius: 0 0 2rem 2rem; }
+            .hero-section h1 { font-size: 2.5rem; }
+            .hero-section p { font-size: 1.1rem !important; }
+            .user-card { padding: 24px; margin-top: -40px; }
+            .avatar-circle { width: 60px; height: 60px; }
+            .avatar-circle i { font-size: 2rem; }
+            .wallet-pill { width: 100%; justify-content: center; }
+            .premium-banner { padding: 40px 24px; border-radius: 32px; }
+            .premium-banner h2 { font-size: 1.75rem; }
             .floating-coin { display: none; }
             .service-card { padding: 28px 16px; }
         }
@@ -445,24 +470,38 @@
 
     <!-- Hero with floating coins -->
     <!-- Hero with floating coins -->
-    <nav class="main-nav">
-        <div class="container d-flex justify-content-between align-items-center">
+    <nav class="navbar navbar-expand-lg main-nav">
+        <div class="container">
             <a class="navbar-brand" href="<?= base_url() ?>">
                 <i class="bi bi-rocket-takeoff-fill me-2"></i>SmartLead
             </a>
-            <div class="d-flex gap-2">
-                <a class="nav-link active" href="<?= base_url() ?>">Home</a>
-                <?php if ($isLoggedIn): ?>
-                    <a class="nav-link" href="<?= base_url('dashboard') ?>">Dashboard</a>
-                <?php else: ?>
-                    <a class="nav-link" href="<?= base_url('login') ?>">Login</a>
-                <?php endif; ?>
-                <?php if ($isLoggedIn):?>
-                    <a class="nav-link" href="<?= base_url('profile') ?>">Profile</a>
-                <?php else: ?>
-                    <a class="nav-link d-none" href="<?= base_url('login') ?>"></a>
-                <?php endif; ?>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+                <i class="bi bi-list"></i>
+            </button>
 
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <div class="navbar-nav ms-auto gap-2">
+                    <a class="nav-link active" href="<?= base_url() ?>">Home</a>
+                    <?php if ($isLoggedIn): ?>
+                        <a class="nav-link" href="<?= base_url('dashboard') ?>">Dashboard</a>
+                        <a class="nav-link" href="<?= base_url('profile') ?>">Profile</a>
+                        <a class="nav-link position-relative" href="<?= base_url('notifications') ?>">
+                            <i class="bi bi-bell"></i>
+                            <?php 
+                                helper('notification');
+                                if (($nCount = get_unread_notification_count()) > 0): 
+                            ?>
+                                <span class="badge bg-danger rounded-circle position-absolute top-1 rotate-0 translate-middle-x" style="font-size: 0.5rem; padding: 0.25em 0.4em;">
+                                    <?= $nCount ?>
+                                </span>
+                            <?php endif; ?>
+                        </a>
+                    <?php else: ?>
+                        <a class="nav-link" href="<?= base_url('login') ?>">Login</a>
+                        <a class="nav-link partner-btn" href="<?= base_url('login') ?>">Become Partner</a>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </nav>
@@ -567,6 +606,33 @@
                         <h4 class="fw-bold mb-2">Ecommerce</h4>
                         <p class="text-secondary-emphasis mb-3">Shop 1000+ brands & get coins on every order.</p>
                         <span class="fw-semibold" style="color: #22c55e;">Explore Deals <i class="bi bi-arrow-right ms-1"></i></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Worker Module Cards -->
+        <div class="service-grid mt-5 pt-4">
+            <h4 class="section-title" data-aos="fade-right">Professional Services</h4>
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-6" data-aos="fade-right" data-aos-delay="400">
+                    <a href="<?= base_url('worker/register') ?>" class="service-card text-start align-items-start p-5">
+                        <div class="icon-box bg-primary bg-opacity-10 text-primary">
+                            <i class="bi bi-briefcase"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3">👷 Work & Earn</h3>
+                        <p class="text-secondary-emphasis mb-4 fs-5">Register your skills and get hired by customers near you. Get jobs from nearby customers easily.</p>
+                        <span class="btn btn-primary rounded-pill px-4 py-2 fw-bold">Become a Worker <i class="bi bi-arrow-right ms-2"></i></span>
+                    </a>
+                </div>
+                <div class="col-md-6" data-aos="fade-left" data-aos-delay="500">
+                    <a href="<?= base_url('hire') ?>" class="service-card text-start align-items-start p-5">
+                        <div class="icon-box bg-success bg-opacity-10 text-success">
+                            <i class="bi bi-person-check"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3">Find Trusted Skilled Professionals</h3>
+                        <p class="text-secondary-emphasis mb-4 fs-5">Find skilled professionals for your daily needs. Quick, reliable, and nearby services.</p>
+                        <span class="btn btn-success rounded-pill px-4 py-2 fw-bold">Find Workers <i class="bi bi-arrow-right ms-2"></i></span>
                     </a>
                 </div>
             </div>

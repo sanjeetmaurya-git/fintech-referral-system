@@ -68,6 +68,13 @@ $routes->group('admin', ['filter' => 'adminAuth'], function($routes) {
     $routes->post('services/ecommerce/save', 'AdminController::saveEcommercePlatform');
     $routes->get('services/transactions', 'AdminController::manageServiceTransactions');
     $routes->post('services/transactions/approve/(:num)', 'AdminController::approveServiceTransaction/$1');
+
+    // Worker Management (Phase 10)
+    $routes->get('workers', 'AdminController::workers');
+    $routes->get('workers/view/(:num)', 'AdminController::viewWorker/$1');
+    $routes->post('workers/approve/(:num)', 'AdminController::approveWorker/$1');
+    $routes->post('workers/reject/(:num)', 'AdminController::rejectWorker/$1');
+    $routes->post('workers/verify-document/(:num)', 'AdminController::verifyDocument/$1');
 });
 
 // ==========================
@@ -116,6 +123,20 @@ $routes->group('', ['filter' => 'auth'], function($routes) { // Assuming an 'aut
     $routes->post('services/recharge/submit', 'UserDashboardController::submitRecharge');
     $routes->get('services/ecommerce', 'UserDashboardController::ecommercePortal');
     $routes->get('services/ecommerce/redirect/(:num)', 'UserDashboardController::ecommerceRedirect/$1');
+
+    // Worker Module (Phase 10)
+    $routes->get('worker/register', 'WorkerController::register');
+    $routes->post('worker/store', 'WorkerController::store');
+    $routes->get('worker/subcategories/(:num)', 'WorkerController::getSubcategories/$1');
+    $routes->get('worker/success', 'WorkerController::success');
+    $routes->get('worker/dashboard', 'WorkerController::dashboard');
+    $routes->get('worker/toggle-status', 'WorkerController::toggleStatus');
+
+    // Hiring System (Phase 2)
+    $routes->get('hire', 'WorkerController::listCategories');
+    $routes->get('hire/workers/(:num)', 'WorkerController::listWorkers/$1');
+    $routes->get('hire/details/(:num)', 'WorkerController::details/$1');
+    $routes->post('hire/request', 'WorkerController::hireRequest');
 });
 
 $routes->get('logout', 'UserDashboardController::logout');
