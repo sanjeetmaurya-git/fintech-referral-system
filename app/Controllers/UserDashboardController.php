@@ -520,7 +520,8 @@ class UserDashboardController extends BaseController
             ]);
 
             return $this->response->setJSON([
-                'success' => true,
+                'status'   => 'success',
+                'success'  => true,
                 'order_id' => $order['id'],
                 'amount'   => $order['amount'],
                 'key_id'   => $razorpay->getKeyId(),
@@ -590,7 +591,7 @@ class UserDashboardController extends BaseController
         ]);
 
         if (!$success) {
-            return $this->response->setJSON(['success' => false, 'message' => 'Payment verification failed.']);
+            return $this->response->setJSON(['status' => 'error', 'success' => false, 'message' => 'Payment verification failed.']);
         }
 
         $settingModel = new \App\Models\SettingModel();
@@ -645,10 +646,10 @@ class UserDashboardController extends BaseController
         $db->transComplete();
 
         if ($db->transStatus() === false) {
-             return $this->response->setJSON(['success' => false, 'message' => 'Failed to activate premium membership.']);
+             return $this->response->setJSON(['status' => 'error', 'success' => false, 'message' => 'Failed to activate premium membership.']);
         }
 
-        return $this->response->setJSON(['success' => true, 'message' => 'Premium membership activated successfully!']);
+        return $this->response->setJSON(['status' => 'success', 'success' => true, 'message' => 'Premium membership activated successfully!']);
     }
 
     public function tree()

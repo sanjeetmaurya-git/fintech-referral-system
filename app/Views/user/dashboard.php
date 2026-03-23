@@ -18,8 +18,8 @@
                 <?php if ($user['is_premium'] == 1): ?>
                     <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold"><i class="bi bi-star-fill me-1"></i>PREMIUM</span>
                 <?php else: ?>
-                    <button class="btn btn-warning btn-sm fw-bold px-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#upgradeModal">
-                        <i class="bi bi-lightning-fill me-1"></i>Upgrade to Premium
+                    <button class="btn premium-btn btn-sm fw-bold px-4 py-2 rounded-pill" data-bs-toggle="modal" data-bs-target="#upgradeModal">
+                        <i class="bi bi-lightning-charge-fill me-1"></i> Upgrade to Premium
                     </button>
                 <?php endif; ?>
             </div>
@@ -55,7 +55,7 @@
             <h3 class="fw-bold mt-2 mb-3"><?= esc($user['referral_code']) ?></h3>
             <p class="small opacity-75 mb-3">Copy your referral link and start building your network!</p>
             <div class="input-group glass-input-group">
-                <input type="text" class="form-control bg-white bg-opacity-20 border-0 text-white rounded-start-pill px-3" value="<?= base_url('join/' . $user['referral_code']) ?>" id="refLink" readonly>
+                <input type="text" class="form-control bg-white bg-opacity-20 border-0 rounded-start-pill px-3" value="<?= base_url('join/' . $user['referral_code']) ?>" id="refLink" readonly>
                 <button class="btn btn-light rounded-end-pill fw-bold px-3" onclick="copyLink()">
                     <i class="bi bi-copy me-1"></i>Copy
                 </button>
@@ -84,12 +84,14 @@
             <?php if ($user['is_premium'] == 0): ?>
                 <div class="locked-overlay d-flex flex-column align-items-center justify-content-center rounded-5">
                     <div class="text-center p-3">
-                        <div class="bg-white bg-opacity-20 rounded-circle d-inline-block p-3 mb-3">
-                            <i class="bi bi-lock-fill fs-2 text-white"></i>
+                        <div class="bg-white bg-opacity-20 rounded-circle d-inline-block p-2 mb-2">
+                            <i class="bi bi-lock-fill fs-2 text-warning"></i>
                         </div>
                         <h5 class="fw-bold mb-2">Premium Feature Locked</h5>
                         <p class="small opacity-75 mb-3">Upgrade to Premium to redeem coins for cash.</p>
-                        <button class="btn btn-light btn-sm fw-bold px-4 rounded-pill" data-bs-toggle="modal" data-bs-target="#upgradeModal">Get Premium</button>
+                        <button class="btn premium-btn btn-sm fw-bold px-5 py-2 mt-2 rounded-pill shadow" data-bs-toggle="modal" data-bs-target="#upgradeModal" style="margin: 6pxpx;">
+                            <i class="bi bi-lightning-charge-fill me-1"></i> Get Premium
+                        </button>
                     </div>
                 </div>
             <?php endif; ?>
@@ -182,19 +184,19 @@
             </div>
             <form action="<?= base_url('upgrade-premium') ?>" method="POST">
                 <?= csrf_field() ?>
-                <div class="modal-body px-4">
+                <div class="modal-body px-4 model-style">
                     <p class="text-muted small mb-4">Unlock <b>unlimited withdrawals</b> and <b>instant coin redemptions</b>.</p>
                     
-                    <div class="form-check p-3 mb-3 bg-light rounded-4">
-                        <input class="form-check-input ms-0 me-3" type="radio" name="payment_type" value="wallet" id="payWallet" checked>
+                    <div class="form-check p-3 mb-3 bg-light rounded-4 pay-check-div">
+                        <input class="form-check-input ms-0 me-3 pay-check" type="radio" name="payment_type" value="wallet" id="payWallet" checked>
                         <label class="form-check-label w-100 cursor-pointer" for="payWallet">
                             <div class="fw-bold">Pay via Wallet</div>
                             <div class="small text-muted">Cost: ₹200.00</div>
                         </label>
                     </div>
 
-                    <div class="form-check p-3 mb-3 bg-light rounded-4">
-                        <input class="form-check-input ms-0 me-3" type="radio" name="payment_type" value="coins" id="payCoins">
+                    <div class="form-check p-3 mb-3 bg-light rounded-4 pay-check-div">
+                        <input class="form-check-input ms-0 me-3 pay-check" type="radio" name="payment_type" value="coins" id="payCoins">
                         <label class="form-check-label w-100 cursor-pointer" for="payCoins">
                             <div class="fw-bold">Pay via Coins</div>
                             <div class="small text-muted">Cost: 1,000 Coins</div>
@@ -202,7 +204,7 @@
                     </div>
 
                     <div class="form-check p-3 bg-light rounded-4">
-                        <input class="form-check-input ms-0 me-3" type="radio" name="payment_type" value="razorpay" id="payRazorpay">
+                        <input class="form-check-input ms-0 me-3 pay-check pay-check-div" type="radio" name="payment_type" value="razorpay" id="payRazorpay">
                         <label class="form-check-label w-100 cursor-pointer" for="payRazorpay">
                             <div class="fw-bold text-primary">Pay via Razorpay</div>
                             <div class="small text-muted">Cost: ₹200.00 (Instant)</div>
@@ -251,7 +253,7 @@
 <style>
 .tracking-wider { letter-spacing: 0.1em; }
 .blur-content {
-    filter: blur(4px);
+    filter: blur(1px);
     pointer-events: none;
     user-select: none;
 }
@@ -259,12 +261,42 @@
     position: absolute;
     inset: 0;
     background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(1px);
     color: white;
     z-index: 10;
 }
 .cursor-pointer { cursor: pointer; }
 .form-check-input:checked { background-color: var(--primary-500); border-color: var(--primary-500); }
+
+.pay-check{
+    border: 2px solid black;
+}
+
+/* Premium Glowing Button */
+.premium-btn {
+    background: linear-gradient(45deg, #f59e0b, #fbbf24, #f59e0b);
+    background-size: 200% auto;
+    color: #fff !important;
+    border: none;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+    transition: 0.5s;
+    animation: gradientShift 3s ease infinite;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.pay-check-div:hover{
+    background-color: #b1b1d2cd;
+}
+.premium-btn:hover {
+    background-position: right center;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
+}
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
 </style>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -275,6 +307,14 @@ function copyLink() {
     document.execCommand("copy");
     alert("Referral link copied to clipboard!");
 }
+
+// Move modals to body to prevent Bootstrap backdrop overlay overlapping issues
+document.addEventListener('DOMContentLoaded', function() {
+    const upgradeModal = document.getElementById('upgradeModal');
+    const redeemModal = document.getElementById('redeemModal');
+    if (upgradeModal) document.body.appendChild(upgradeModal);
+    if (redeemModal) document.body.appendChild(redeemModal);
+});
 
 document.querySelector('#upgradeModal form').addEventListener('submit', function(e) {
     const paymentType = this.querySelector('input[name="payment_type"]:checked').value;
