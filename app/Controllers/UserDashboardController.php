@@ -185,7 +185,10 @@ class UserDashboardController extends BaseController
             return redirect()->to(base_url('admin/'));
         }
 
-        return redirect()->to(base_url('dashboard'));
+        $redirectUrl = $this->session->get('redirect_url') ?? base_url('dashboard');
+        $this->session->remove('redirect_url');
+
+        return redirect()->to($redirectUrl);
     }
 
     // ==========================

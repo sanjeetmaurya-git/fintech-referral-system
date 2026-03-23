@@ -26,9 +26,11 @@ class WorkerModel extends Model
 
     public function getWorkerWithCategory($userId)
     {
-        return $this->select('workers.*, work_categories.name as category_name, work_subcategories.name as subcategory_name')
+        return $this->select('workers.*, work_categories.name as category_name, work_subcategories.name as subcategory_name, users.profile_image, user_profiles.full_name')
                     ->join('work_categories', 'work_categories.id = workers.category_id', 'left')
                     ->join('work_subcategories', 'work_subcategories.id = workers.subcategory_id', 'left')
+                    ->join('users', 'users.id = workers.user_id', 'left')
+                    ->join('user_profiles', 'user_profiles.user_id = workers.user_id', 'left')
                     ->where('workers.user_id', $userId)
                     ->first();
     }

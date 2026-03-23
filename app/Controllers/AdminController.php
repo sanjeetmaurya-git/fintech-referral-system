@@ -848,6 +848,33 @@ class AdminController extends BaseController
         return redirect()->back()->with('error', 'Failed to reject worker.');
     }
 
+    public function deleteWorker($id)
+    {
+        $worker = $this->workerModel->find($id);
+        if (!$worker) {
+            return redirect()->to(base_url('admin/workers'))->with('error', 'Worker not found.');
+        }
+
+        // Delete documents from filesystem
+        $docModel = new WorkerDocumentModel();
+        $docs = $docModel->where('worker_id', $id)->findAll();
+        foreach ($docs as $doc) {
+            $path = FCPATH . str_replace(base_url(), '', $doc['file_path']);
+            if (file_exists($path) && is_file($path)) {
+                unlink($path);
+            }
+        }
+        // Delete documents from database
+        $docModel->where('worker_id', $id)->delete();
+
+        // Delete worker record
+        if ($this->workerModel->delete($id)) {
+            $this->auditLogModel->log(session()->get('user_id'), 'DELETE_WORKER', "Deleted worker application ID: {$id}");
+            return redirect()->to(base_url('admin/workers'))->with('success', 'Worker application has been completely deleted. The user can now apply again.');
+        }
+        return redirect()->back()->with('error', 'Failed to delete worker application.');
+    }
+
     public function verifyDocument($docId)
     {
         $docModel = new WorkerDocumentModel();

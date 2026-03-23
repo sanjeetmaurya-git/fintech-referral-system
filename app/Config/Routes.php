@@ -7,8 +7,15 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 $routes->get('/', 'Home::index');
+$routes->get('test', function() { return 'CodeIgniter is alive! URI is: ' . current_url(); });
+$routes->get('fintech-referral-system/public', function() { return 'Matched full path!'; });
 $routes->get('join/(:any)', 'JoinController::index/$1');
 $routes->post('payment/webhook', 'PaymentController::razorpayWebhook');
+
+// ==========================
+// File Serving Route
+// ==========================
+$routes->get('uploads/(.+)', 'FileController::serve/$1');
 
 // ==========================
 // API Routes
@@ -74,6 +81,7 @@ $routes->group('admin', ['filter' => 'adminAuth'], function($routes) {
     $routes->get('workers/view/(:num)', 'AdminController::viewWorker/$1');
     $routes->post('workers/approve/(:num)', 'AdminController::approveWorker/$1');
     $routes->post('workers/reject/(:num)', 'AdminController::rejectWorker/$1');
+    $routes->post('workers/delete/(:num)', 'AdminController::deleteWorker/$1');
     $routes->post('workers/verify-document/(:num)', 'AdminController::verifyDocument/$1');
 });
 
@@ -124,19 +132,21 @@ $routes->group('', ['filter' => 'auth'], function($routes) { // Assuming an 'aut
     $routes->get('services/ecommerce', 'UserDashboardController::ecommercePortal');
     $routes->get('services/ecommerce/redirect/(:num)', 'UserDashboardController::ecommerceRedirect/$1');
 
-    // Worker Module (Phase 10)
+    // Hiring System (Phase 2)
+    $routes->get('hire', 'WorkerController::listCategories');
+    $routes->get('hire/workers/(:num)', 'WorkerController::listWorkers/$1');
+    $routes->get('hire/details/(:num)', 'WorkerController::details/$1');
+    $routes->post('hire/request', 'WorkerController::hireRequest');
+
+    // Worker Registration (Protected)
     $routes->get('worker/register', 'WorkerController::register');
     $routes->post('worker/store', 'WorkerController::store');
     $routes->get('worker/subcategories/(:num)', 'WorkerController::getSubcategories/$1');
     $routes->get('worker/success', 'WorkerController::success');
     $routes->get('worker/dashboard', 'WorkerController::dashboard');
     $routes->get('worker/toggle-status', 'WorkerController::toggleStatus');
-
-    // Hiring System (Phase 2)
-    $routes->get('hire', 'WorkerController::listCategories');
-    $routes->get('hire/workers/(:num)', 'WorkerController::listWorkers/$1');
-    $routes->get('hire/details/(:num)', 'WorkerController::details/$1');
-    $routes->post('hire/request', 'WorkerController::hireRequest');
 });
 
 $routes->get('logout', 'UserDashboardController::logout');
+
+

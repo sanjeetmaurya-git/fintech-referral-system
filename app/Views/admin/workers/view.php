@@ -190,7 +190,7 @@
                     </button>
                 </form>
 
-                <button type="button" class="btn btn-outline-danger btn-lg rounded-pill fw-bold w-100" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                <button type="button" class="btn btn-outline-danger btn-lg rounded-pill fw-bold w-100 mb-2" data-bs-toggle="modal" data-bs-target="#rejectModal">
                     <i class="bi bi-x-circle me-2"></i>Reject Application
                 </button>
             <?php else: ?>
@@ -199,6 +199,11 @@
                     <p>Application is currently <strong><?= strtoupper($worker['status']) ?></strong>.</p>
                 </div>
             <?php endif; ?>
+
+            <!-- Always allow deletion -->
+            <button type="button" class="btn btn-danger btn-lg rounded-pill fw-bold w-100 mt-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                <i class="bi bi-trash3 me-2"></i>Delete Application
+            </button>
 
             <!-- Quick document stats -->
             <hr>
@@ -234,7 +239,30 @@
                 </div>
                 <div class="modal-footer border-0 pt-0">
                     <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold">Confirm Rejection</button>
+                    <button type="submit" class="btn btn-outline-danger rounded-pill px-4 fw-bold">Confirm Rejection</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow">
+            <div class="modal-header border-0 pb-0 bg-danger text-white rounded-top-4">
+                <h5 class="modal-title fw-bold mt-2 ms-2"><i class="bi bi-exclamation-triangle-fill me-2"></i>Delete Application</h5>
+                <button type="button" class="btn-close btn-close-white mt-1 me-1" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="<?= base_url('admin/workers/delete/' . $worker['id']) ?>" method="POST">
+                <?= csrf_field() ?>
+                <div class="modal-body py-4">
+                    <p class="mb-2 fw-bold text-danger text-center fs-5">This action cannot be undone!</p>
+                    <p class="text-muted mb-0 text-center">This will permanently delete the worker application, their profile information, and all uploaded documents from the server. The user will be able to apply again from scratch.</p>
+                </div>
+                <div class="modal-footer border-0 pt-0 pb-3 justify-content-center bg-light rounded-bottom-4">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger rounded-pill px-5 fw-bold shadow-sm">Yes, Permanently Delete</button>
                 </div>
             </form>
         </div>

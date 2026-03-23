@@ -165,10 +165,8 @@ class WorkerController extends BaseController
             }
 
             // -------------------------------------------------------
-            // STEP 4: Document uploads (outside transaction - file ops)
+            // STEP 4: Document uploads (inside transaction to rollback on failure)
             // -------------------------------------------------------
-            $db->transCommit(); // commit DB changes before file operations
-
             $docModel = new WorkerDocumentModel();
             $files    = [
                 'profile_image' => 'profile_image',
@@ -180,33 +178,63 @@ class WorkerController extends BaseController
 
             foreach ($files as $dbType => $inputName) {
                 $file = $this->request->getFile($inputName);
-                if ($file && $file->isValid() && !$file->hasMoved()) {
-                    $uploadDir = WRITEPATH . 'uploads/workers/' . $workerId;
-                    if (!is_dir($uploadDir)) {
-                        mkdir($uploadDir, 0755, true);
+                
+                if ($file) {
+                    if (!$file->isValid()) {
+                        // Certificate is optional, others are required
+                        if ($dbType !== 'certificate' && $file->getError() !== UPLOAD_ERR_NO_FILE) {
+                            throw new \RuntimeException("Failed to upload {$inputName}: " . $file->getErrorString());
+                        } elseif ($dbType !== 'certificate' && $file->getError() === UPLOAD_ERR_NO_FILE) {
+                            if (!$existingWorker) throw new \RuntimeException("Please upload {$inputName}. It is required.");
+                        }
+                        continue; // Skip optional missing files or existing valid files
                     }
-                    $newName = $file->getRandomName();
-                    $file->move($uploadDir, $newName);
+                    
+                    if (!$file->hasMoved()) {
+                        $uploadDir = WRITEPATH . 'uploads/workers/' . $workerId;
+                        if (!is_dir($uploadDir)) {
+                            if (!mkdir($uploadDir, 0755, true)) {
+                                throw new \RuntimeException("Failed to create upload directory.");
+                            }
+                        }
+                        $newName = $file->getRandomName();
+                        
+                        try {
+                            $file->move($uploadDir, $newName);
+                        } catch (\Exception $e) {
+                            throw new \RuntimeException("Failed to save {$inputName} to disk: " . $e->getMessage());
+                        }
 
-                    // Remove old doc if re-registering
-                    if ($existingWorker) {
-                        $docModel->where('worker_id', $workerId)->where('document_type', $dbType)->delete();
+                        // Remove old doc if re-registering
+                        if ($existingWorker) {
+                            $docModel->where('worker_id', $workerId)->where('document_type', $dbType)->delete();
+                        }
+
+                        $insertId = $docModel->skipValidation(true)->insert([
+                            'worker_id'     => $workerId,
+                            'document_type' => $dbType,
+                            'file_path'     => 'uploads/workers/' . $workerId . '/' . $newName,
+                        ], true);
+
+                        if (!$insertId) {
+                            throw new \RuntimeException("Database error: failed to save document record for {$dbType}.");
+                        }
+
+                        // Store profile image path in users table
+                        if ($dbType === 'profile_image') {
+                            $this->userModel->skipValidation(true)->update($userId, [
+                                'profile_image' => 'uploads/workers/' . $workerId . '/' . $newName,
+                            ]);
+                        }
                     }
-
-                    $docModel->skipValidation(true)->insert([
-                        'worker_id'     => $workerId,
-                        'document_type' => $dbType,
-                        'file_path'     => 'uploads/workers/' . $workerId . '/' . $newName,
-                    ]);
-
-                    // Store profile image path in users table
-                    if ($dbType === 'profile_image') {
-                        $this->userModel->skipValidation(true)->update($userId, [
-                            'profile_image' => 'uploads/workers/' . $workerId . '/' . $newName,
-                        ]);
+                } else {
+                    if ($dbType !== 'certificate' && !$existingWorker) {
+                        throw new \RuntimeException("Missing file input: {$inputName}");
                     }
                 }
             }
+
+            $db->transCommit(); // commit DB changes ONLY AFTER file operations succeed
 
         } catch (\Throwable $e) {
             if ($db->transStatus() !== false) {

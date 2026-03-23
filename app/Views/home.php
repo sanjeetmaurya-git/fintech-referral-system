@@ -608,6 +608,39 @@
                         <span class="fw-semibold" style="color: #22c55e;">Explore Deals <i class="bi bi-arrow-right ms-1"></i></span>
                     </a>
                 </div>
+                <!-- additional tabs  -->
+                 <div class="col-md-4" data-aos="zoom-in-up" data-aos-delay="100">
+                    <a href="<?= base_url('services/recharge') ?>" class="service-card">
+                        <div class="icon-box recharge-icon">
+                            <i class="bi bi-phone-vibrate"></i>
+                        </div>
+                        <h4 class="fw-bold mb-2">Local Market </h4>
+                        <p class="text-secondary-emphasis mb-3">By any product from your own local market.</p>
+                        <span class="fw-semibold" style="color: #3b82f6;">Shop Now <i class="bi bi-arrow-right ms-1"></i></span>
+                    </a>
+                </div>
+                <!-- pm wani tab  -->
+                <div class="col-md-4" data-aos="zoom-in-up" data-aos-delay="100">
+                    <a href="<?= base_url('services/recharge') ?>" class="service-card">
+                        <div class="icon-box recharge-icon">
+                            <i class="bi bi-phone-vibrate"></i>
+                        </div>
+                        <h4 class="fw-bold mb-2">PM-WANI Wifi  </h4>
+                        <p class="text-secondary-emphasis mb-3">Use Internet in Chipper Price.</p>
+                        <span class="fw-semibold" style="color: #3b82f6;">Find nearrest Hotspot <i class="bi bi-arrow-right ms-1"></i></span>
+                    </a>
+                </div>
+                <!-- insurence tab  -->
+                <div class="col-md-4" data-aos="zoom-in-up" data-aos-delay="100">
+                    <a href="<?= base_url('services/recharge') ?>" class="service-card">
+                        <div class="icon-box recharge-icon">
+                            <i class="bi bi-phone-vibrate"></i>
+                        </div>
+                        <h4 class="fw-bold mb-2">Insurence </h4>
+                        <p class="text-secondary-emphasis mb-3">Make you and your family secure.</p>
+                        <span class="fw-semibold" style="color: #3b82f6;">Buy insurence <i class="bi bi-arrow-right ms-1"></i></span>
+                    </a>
+                </div>
             </div>
         </div>
 
