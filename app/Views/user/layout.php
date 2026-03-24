@@ -122,7 +122,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-center gap-2">
                 <li class="nav-item">
-                    <a class="nav-link <?= ($active ?? '') === 'home' ? 'active' : '' ?>" href="<?= base_url('#') ?>">Become Partner </a>
+                    <a class="nav-link <?= ($active ?? '') === 'home' ? 'active' : '' ?>" href="<?= base_url('worker/register') ?>">Become Partner </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?= ($active ?? '') === 'home' ? 'active' : '' ?>" href="<?= base_url('/') ?>">Home</a>

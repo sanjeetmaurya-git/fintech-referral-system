@@ -416,6 +416,34 @@
             box-shadow: 0 25px 35px -8px #00000066;
         }
 
+        /**comming soon style  */
+        /* Coming Soon Overlay */
+        .coming-soon {
+            pointer-events: none; /* disable click */
+        }
+
+        .coming-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.31);
+            backdrop-filter: blur(1px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 32px;
+    z-index: 5;
+}
+
+.coming-overlay span {
+    color: white;
+    font-weight: 700;
+    font-size: 1.2rem;
+    background: rgba(255,255,255,0.1);
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
         /* Footer */
         .footer {
             padding: 40px 0 20px;
@@ -499,7 +527,7 @@
                         </a>
                     <?php else: ?>
                         <a class="nav-link" href="<?= base_url('login') ?>">Login</a>
-                        <a class="nav-link partner-btn" href="<?= base_url('login') ?>">Become Partner</a>
+                        <a class="nav-link partner-btn" href="<?= base_url('worker/register') ?>">Become Partner</a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -610,9 +638,15 @@
                 </div>
                 <!-- additional tabs  -->
                  <div class="col-md-4" data-aos="zoom-in-up" data-aos-delay="100">
-                    <a href="<?= base_url('services/recharge') ?>" class="service-card">
+                    <a href="javascript:void(0)" class="service-card coming-soon"> <!-- remove this on active -->
+                    <!-- <a href="<?php //echo base_url('services/recharge') ?>" class="service-card"> -->
+                            <!-- Overlay -->
+                            <div class="coming-overlay">
+                                <span>Service Coming Soon</span>
+                            </div>
                         <div class="icon-box recharge-icon">
-                            <i class="bi bi-phone-vibrate"></i>
+                            <!-- <i class="bi bi-phone-vibrate"></i> -->
+                            <img src="<?= base_url('uploads/front-image/' . 'Local-shop.jfif') ?>" alt="Image">
                         </div>
                         <h4 class="fw-bold mb-2">Local Market </h4>
                         <p class="text-secondary-emphasis mb-3">By any product from your own local market.</p>
@@ -623,7 +657,9 @@
                 <div class="col-md-4" data-aos="zoom-in-up" data-aos-delay="100">
                     <a href="<?= base_url('services/recharge') ?>" class="service-card">
                         <div class="icon-box recharge-icon">
-                            <i class="bi bi-phone-vibrate"></i>
+                            <!-- <i class="bi bi-phone-vibrate"></i> -->
+                             <img src="<?= base_url('uploads/front-image/' . 'Pmwani.jpeg') ?>" alt="Image" style="height: 104px;
+    border-radius: 5px;">
                         </div>
                         <h4 class="fw-bold mb-2">PM-WANI Wifi  </h4>
                         <p class="text-secondary-emphasis mb-3">Use Internet in Chipper Price.</p>

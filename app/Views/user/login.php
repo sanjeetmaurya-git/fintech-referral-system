@@ -1,9 +1,17 @@
 <?php $this->extend('user/layout'); ?>
 <?php $this->section('content'); ?>
 
-<div class="row justify-content-center mt-5">
+
+<style>
+    .login-bg{
+        background: #ceded8;
+    }
+    
+</style>
+
+<div class="row justify-content-center mt-5 ">
     <div class="col-md-5">
-        <div class="card p-4">
+        <div class="card p-4 login-bg">
             <h4 class="fw-bold mb-3 text-center">Mobile Login</h4>
             <p class="text-muted text-center mb-4">Enter your registered mobile number to receive an OTP.</p>
             
@@ -30,3 +38,4 @@
 </div>
 
 <?php $this->endSection(); ?>
+

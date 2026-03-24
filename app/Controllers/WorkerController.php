@@ -38,7 +38,7 @@ class WorkerController extends BaseController
 
         $data = [
             'title'      => 'Register as a Worker',
-            'categories' => $this->categoryModel->where('is_active', 1)->findAll(),
+            'categories' => $this->categoryModel->where('is_active', 1)->groupBy('name')->findAll(),
             'phone'      => $this->session->get('phone') ?? '',
             'isLoggedIn' => $this->session->get('isLoggedIn') ?? false
         ];
@@ -300,7 +300,7 @@ class WorkerController extends BaseController
     {
         $data = [
             'title'      => 'Find Professional Workers',
-            'categories' => $this->categoryModel->where('is_active', 1)->findAll(),
+            'categories' => $this->categoryModel->where('is_active', 1)->groupBy('name')->findAll(),
             'active'     => 'hire'
         ];
         return view('user/hiring/categories', $data);
